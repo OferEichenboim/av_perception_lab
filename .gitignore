@@ -1,0 +1,10 @@
+#datasets
+/datasets/kitti/object2d/devkit/
+/datasets/kitti/object2d/training/
+/datasets/kitti/object2d/testing/
+
+#personal configuration
+*.json
+
+#compilation files
+*.pyc
