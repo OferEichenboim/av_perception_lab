@@ -1,19 +1,18 @@
 import cv2
 from cv2 import rectangle,putText,FONT_HERSHEY_SIMPLEX
-from datasets.kitti.object2d.parser import Label
 from pathlib import Path
 
 COLOR_DICT = {"green": (0,200,0), "red": (0,0,255), "blue": (255,0,0)}
 
 class Box:
-    def __init__(self,img,label,color = "green",thickness = 2):
-        self.img = self.get_image_copy(img)
-        self.label = label.copy()
+    def __init__(self,img_path,label,color = "green",thickness = 2):
+        self.img = self.get_image_copy(img_path)
+        self.label = label
         self.color = self.set_color_tup(color) 
         self.thickness = thickness
 
-    def get_image_copy(self,img): 
-        img = cv2.imread(str(img)).copy()
+    def get_image_copy(self,img_path): 
+        img = cv2.imread(str(img_path)).copy()
         img = cv2.cvtColor(img, code = cv2.COLOR_BGR2RGB)
         return img
     
@@ -30,15 +29,15 @@ class Box:
 
 
 
-class Box_kitti_obj2d(Box):
-    def __init__(self,img,label,color = "green",thickness = 2):
-        super().__init__(img,label,color,thickness)   
-        self.bbox = self.label["bbox"]
-        self.type = self.label["type"]
+class KittiOBJ2DBoxImage(Box):
+    def __init__(self,img_path,label,color = "green",thickness = 2):
+        super().__init__(img_path,label,color,thickness)   
+        self.bbox = label.bbox
+        self.type = self.label.type
 
     def draw2(self): #bbox = left, top, right, bottom
-        img_box = self.img.copy()
-        lx, ly, rx, ry = map(int, self.bbox)
+        img_box = self.img
+        lx, ly, rx, ry = self.bbox.lx, self.bbox.ly, self.bbox.rx, self.bbox.ry
         start_point = (lx,ly)
         end_point = (rx,ry)
         img_box = rectangle(img_box, start_point, end_point, self.color, self.thickness)
@@ -46,9 +45,8 @@ class Box_kitti_obj2d(Box):
         return img_box
     
     def draw(self):  # bbox = left, top, right, bottom
-        img_box = self.img.copy()
-        lx, ly, rx, ry = map(int, self.bbox)
-
+        img_box = self.img
+        lx, ly, rx, ry = int(self.bbox.lx), int(self.bbox.ly), int(self.bbox.rx), int(self.bbox.ry)
         # Draw bounding box
         cv2.rectangle(
             img_box,
