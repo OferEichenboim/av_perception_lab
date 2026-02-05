@@ -10,7 +10,10 @@ class KittiObj2DLabel:
         self.rotation_y = label_dict["rotation_y"]  
         self.path = label_dict["file_path"]
 
-        
+    @classmethod
+    def from_dict(cls, label_dict):
+        return cls(label_dict)
+
 
 class KittiObj2DBbox:
     def __init__(self,bbox): #lx, ly, rx, ry = map(int, self.bbox)
@@ -31,4 +34,5 @@ class ImageLabels():
     
     def __getitem__(self,idx):
         return self.labels[idx]
+
 
